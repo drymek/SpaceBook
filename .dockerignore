@@ -1,0 +1,5 @@
+.github
+Taskfile.yml
+README.md
+deployments/dev/docker-compose.yml
+deployments/Dockerfile
