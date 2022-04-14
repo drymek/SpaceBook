@@ -49,7 +49,7 @@ func (s *BookSuite) TestBooking() {
 	s.Contains(string(got), "id")
 
 	s.Nil(err)
-	s.Equal(http.StatusNoContent, res.StatusCode, "Expected status code 204")
+	s.Equal(http.StatusOK, res.StatusCode, "Expected status code 200")
 }
 
 func (s *BookSuite) TestInvalidBookingLaunchpad() {
