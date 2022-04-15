@@ -29,7 +29,7 @@ func DecodeBookingRequest(logger logger.Logger) httpkit.DecodeRequestFunc {
 				return nil, err2
 			}
 
-			return nil, httpx.ErrBadRequest(&err)
+			return nil, httpx.NewBadRequest(err)
 		}
 
 		return request, nil

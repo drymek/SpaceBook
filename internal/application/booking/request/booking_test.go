@@ -23,13 +23,13 @@ func TestRequestSuite(t *testing.T) {
 
 func (s *BookingSuite) TestValidInput() {
 	json := `{
-		firstname: "John",
-		lastname: "Doe",
-		gender: "Male",
-		birthday: "2000-07-21",
-		launchpadID: "FREE LAUNCHPAD ID",
-		destinationID: "FREE LAUNCHPAD ID", 
-		launchDate: "2022-07-22"
+		"firstname": "John",
+		"lastname": "Doe",
+		"gender": "Male",
+		"birthday": "2000-07-21",
+		"launchpadID": "FREE LAUNCHPAD ID",
+		"destinationID": "FREE LAUNCHPAD ID", 
+		"launchDate": "2022-07-22"
 	}`
 
 	req := httptest.NewRequest(http.MethodPost, "/booking", strings.NewReader(json))

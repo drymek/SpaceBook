@@ -7,7 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"dryka.pl/SpaceBook/internal/application/config"
 	"dryka.pl/SpaceBook/internal/application/server"
+	"dryka.pl/SpaceBook/internal/domain/booking/service"
+	"dryka.pl/SpaceBook/internal/infrastructure/logger"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -18,7 +21,16 @@ type BookSuite struct {
 
 func TestBookSuite(t *testing.T) {
 	s := new(BookSuite)
-	s.AppDependencies = server.Dependencies{}
+	c, err := config.NewConfig()
+	if err != nil {
+		t.Fatalf("invalid config: %v", err)
+	}
+
+	s.AppDependencies = server.Dependencies{
+		Logger:         logger.NewNullLogger(),
+		BookingService: service.NewBookingService(),
+		Config:         c,
+	}
 
 	suite.Run(t, s)
 }
@@ -29,17 +41,17 @@ func (s *BookSuite) TestBooking() {
 
 	//@TODO
 	body := `{
-		firstname: "John",
-		lastname: "Doe",
-		gender: "Male",
-		birthday: "2000-07-21",
-		launchpadID: "FREE LAUNCHPAD ID",
-		destinationID: "FREE LAUNCHPAD ID", 
-		launchDate: ""
+		"firstname": "John",
+		"lastname": "Doe",
+		"gender": "Male",
+		"birthday": "2000-07-21",
+		"launchpadID": "FREE LAUNCHPAD ID",
+		"destinationID": "FREE LAUNCHPAD ID", 
+		"launchDate": ""
 	}`
 
 	requestBody := []byte(body)
-	res, err := http.Post(srv.URL+"/book", "application/json", bytes.NewBuffer(requestBody))
+	res, err := http.Post(srv.URL+"/bookings", "application/json", bytes.NewBuffer(requestBody))
 	s.NoError(err)
 	got, err := ioutil.ReadAll(res.Body)
 	err2 := res.Body.Close()
@@ -58,17 +70,17 @@ func (s *BookSuite) TestInvalidBookingLaunchpad() {
 
 	//@TODO
 	body := `{
-		firstname: "John",
-		lastname: "Doe",
-		gender: "Male",
-		birthday: "2000-07-21",
-		launchpadID: "TAKEN LAUNCHPAD ID",
-		destinationID: "FREE LAUNCHPAD ID", 
-		launchDate: ""
+		"firstname": "John",
+		"lastname": "Doe",
+		"gender": "Male",
+		"birthday": "2000-07-21",
+		"launchpadID": "TAKEN LAUNCHPAD ID",
+		"destinationID": "FREE LAUNCHPAD ID", 
+		"launchDate": ""
 	}`
 
 	requestBody := []byte(body)
-	res, err := http.Post(srv.URL+"/book", "application/json", bytes.NewBuffer(requestBody))
+	res, err := http.Post(srv.URL+"/bookings", "application/json", bytes.NewBuffer(requestBody))
 	s.NoError(err)
 	got, err := ioutil.ReadAll(res.Body)
 	err2 := res.Body.Close()
@@ -86,17 +98,17 @@ func (s *BookSuite) TestInvalidBookingDestination() {
 
 	//@TODO
 	body := `{
-		firstname: "John",
-		lastname: "Doe",
-		gender: "Male",
-		birthday: "2000-07-21",
-		launchpadID: "TAKEN LAUNCHPAD ID",
-		destinationID: "FREE LAUNCHPAD ID", 
-		launchDate: ""
+		"firstname": "John",
+		"lastname": "Doe",
+		"gender": "Male",
+		"birthday": "2000-07-21",
+		"launchpadID": "FREE LAUNCHPAD ID",
+		"destinationID": "INVALID LAUNCHPAD ID", 
+		"launchDate": ""
 	}`
 
 	requestBody := []byte(body)
-	res, err := http.Post(srv.URL+"/book", "application/json", bytes.NewBuffer(requestBody))
+	res, err := http.Post(srv.URL+"/bookings", "application/json", bytes.NewBuffer(requestBody))
 	s.NoError(err)
 	got, err := ioutil.ReadAll(res.Body)
 	err2 := res.Body.Close()
