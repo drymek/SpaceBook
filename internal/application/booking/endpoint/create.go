@@ -40,7 +40,7 @@ func MakeCreateEndpoint(_ logger.Logger, service service.BookingService) endpoin
 			return nil, httpx.NewBadRequest(err)
 		}
 
-		err = service.Create(booking)
+		err = service.Create(&booking)
 		if err != nil {
 			return nil, httpx.NewBadRequest(err)
 		}

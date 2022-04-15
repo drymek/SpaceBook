@@ -13,6 +13,7 @@ import (
 	"dryka.pl/SpaceBook/internal/domain/booking/model"
 	"dryka.pl/SpaceBook/internal/domain/booking/service"
 	"dryka.pl/SpaceBook/internal/infrastructure/logger"
+	"dryka.pl/SpaceBook/internal/infrastructure/persistence/inmemory/repository"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -34,7 +35,7 @@ func TestBookSuite(t *testing.T) {
 
 	s.AppDependencies = server.Dependencies{
 		Logger:         logger.NewNullLogger(),
-		BookingService: service.NewBookingService(),
+		BookingService: service.NewBookingService(repository.NewBookingRepository(), service.NewStaticSpaceXClient()),
 		Config:         c,
 	}
 
@@ -57,7 +58,7 @@ func (s *BookSuite) TestBooking() {
 		"birthday": "2000-07-21",
 		"launchpadID": "%s",
 		"destinationID": "%s", 
-		"launchDate": "2022-01-20"
+		"launchDate": "2022-01-17"
 	}`, s.ValidLaunchpadID, s.ValidDestinationID)
 
 	requestBody := []byte(body)

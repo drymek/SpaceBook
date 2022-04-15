@@ -14,12 +14,11 @@ const (
 type DestinationID string
 
 const (
-	Mars     DestinationID = "Mars"
-	Moon                   = "Moon"
-	Pluto                  = "Pluto"
-	Asteroid               = "Asteroid"
-	Belt                   = "Belt"
-	Europa                 = "Europa"
-	Titan                  = "Titan"
-	Ganymede               = "Ganymede"
+	Mars         DestinationID = "Mars"
+	Moon                       = "Moon"
+	Pluto                      = "Pluto"
+	AsteroidBelt               = "Asteroid Belt"
+	Europa                     = "Europa"
+	Titan                      = "Titan"
+	Ganymede                   = "Ganymede"
 )
