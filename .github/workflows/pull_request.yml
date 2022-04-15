@@ -6,20 +6,14 @@ on:
 jobs:
   pull-request:
     runs-on: ubuntu-latest
-    services:
-      database:
-        image: postgres
-        env:
-          POSTGRES_USER: sb
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: sb
-        volumes:
-          - database/postgres:/docker-entrypoint-initdb.d
-        ports:
-          - "5432:5432"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: postgres
+          options: --volume ${{ github.workspace }}/database/postgres:/docker-entrypoint-initdb.d --env POSTGRES_USER=sb --env POSTGRES_PASSWORD=password --env POSTGRES_DB=sb --publish 5432:5432
 
       - name: Set up Go
         uses: actions/setup-go@v2
