@@ -6,7 +6,7 @@ import (
 )
 
 type BookingService interface {
-	Create(booking model.Booking) error
+	Create(booking *model.Booking) error
 }
 
 type bookingService struct {
@@ -15,7 +15,7 @@ type bookingService struct {
 	timetable  Timetable
 }
 
-func (b *bookingService) Create(booking model.Booking) error {
+func (b *bookingService) Create(booking *model.Booking) error {
 	launches, err := b.client.GetLaunches(booking.LaunchDate, booking.LaunchpadID)
 	if err != nil {
 		return ErrBookingService(err)

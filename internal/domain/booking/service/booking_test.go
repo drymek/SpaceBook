@@ -31,7 +31,7 @@ func (s *SpaceXClientMock) GetLaunches(date model.DayDate, id model.LaunchpadID)
 func (s *BookingSuite) TestPersist() {
 	date, err := model.NewDayDateFromString("2020-01-01")
 	s.NoError(err)
-	booking := model.Booking{
+	booking := &model.Booking{
 		ID:            "123",
 		Firstname:     "Marcin",
 		Lastname:      "Dryka",
@@ -54,7 +54,7 @@ func (s *BookingSuite) TestPersist() {
 func (s *BookingSuite) TestSpaceXBookingExists() {
 	date, err := model.NewDayDateFromString("2020-01-01")
 	s.NoError(err)
-	booking := model.Booking{
+	booking := &model.Booking{
 		ID:            "123",
 		Firstname:     "Marcin",
 		Lastname:      "Dryka",
@@ -78,7 +78,7 @@ func (s *BookingSuite) TestSpaceXBookingExists() {
 func (s *BookingSuite) TestSpaceXBookingClientError() {
 	date, err := model.NewDayDateFromString("2020-01-01")
 	s.NoError(err)
-	booking := model.Booking{
+	booking := &model.Booking{
 		ID:            "123",
 		Firstname:     "Marcin",
 		Lastname:      "Dryka",
@@ -103,7 +103,7 @@ func (s *BookingSuite) TestSpaceXBookingClientError() {
 func (s *BookingSuite) TestWrongDestination() {
 	date, err := model.NewDayDateFromString("2020-01-01")
 	s.NoError(err)
-	booking := model.Booking{
+	booking := &model.Booking{
 		ID:            "123",
 		Firstname:     "Marcin",
 		Lastname:      "Dryka",
@@ -128,7 +128,7 @@ type BookingRepositoryMock struct {
 	mock.Mock
 }
 
-func (b *BookingRepositoryMock) Create(booking model.Booking) error {
+func (b *BookingRepositoryMock) Create(booking *model.Booking) error {
 	args := b.Called(booking)
 	return args.Error(0)
 }

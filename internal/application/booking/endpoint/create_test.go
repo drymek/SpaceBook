@@ -33,7 +33,7 @@ func (s *EndpointSuite) TestHandleErrorFromService() {
 		LaunchDate:    "2020-01-01",
 	}
 
-	serviceErr := service2.ErrInvalidBookingDate(nil)
+	serviceErr := service2.ErrBookingService(service2.ErrBookingDateConflict)
 	service := new(BookingServiceMock)
 	service.On("Create", mock.Anything).
 		Return(serviceErr)
@@ -127,7 +127,7 @@ type BookingServiceMock struct {
 	mock.Mock
 }
 
-func (b *BookingServiceMock) Create(booking model.Booking) error {
+func (b *BookingServiceMock) Create(booking *model.Booking) error {
 	args := b.Called(booking)
 	return args.Error(0)
 }
