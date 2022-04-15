@@ -1,25 +1,57 @@
 package model
 
+import (
+	"fmt"
+)
+
 type Booking struct {
-	ID            string `json:"id"`
-	Firstname     string `json:"firstname"`
-	Lastname      string `json:"lastname"`
-	Gender        string `json:"gender"`
-	Birthday      string `json:"birthday"`
-	LaunchpadID   string `json:"launchpadID"`
-	DestinationID string `json:"destinationID"`
-	LaunchDate    string `json:"launchDate"`
+	ID            string        `json:"id"`
+	Firstname     string        `json:"firstname"`
+	Lastname      string        `json:"lastname"`
+	Gender        string        `json:"gender"`
+	Birthday      string        `json:"birthday"`
+	LaunchpadID   LaunchpadID   `json:"launchpad_id"`
+	DestinationID DestinationID `json:"destination_id"`
+	LaunchDate    string        `json:"launchDate"`
 }
 
 func (b Booking) Validate() error {
 	if len(b.Firstname) == 0 {
-		return ErrInvalidFirstname
+		return fmt.Errorf("%w: invalid firstname", ErrBookingValidation)
+	}
+
+	err := b.validateLaunchpadID()
+	if err != nil {
+		return err
+	}
+
+	err = b.validateDestinationID()
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func NewBooking(firstname string, lastname string, gender string, birthday string, launchpadID string, destinationID string, launchDate string) (Booking, error) {
+func (b Booking) validateLaunchpadID() error {
+	switch b.LaunchpadID {
+	case VandenbergSpaceForceBase1, CapeCanaveral1, BocaChicaVillage, OmelekIsland, VandenbergSpaceForceBase2, CapeCanaveral2:
+		return nil
+	}
+
+	return fmt.Errorf("%w: invalid launchpad_id", ErrBookingValidation)
+}
+
+func (b Booking) validateDestinationID() error {
+	switch b.DestinationID {
+	case Mars, Moon, Pluto, Asteroid, Belt, Europa, Titan, Ganymede:
+		return nil
+	}
+
+	return fmt.Errorf("%w: invalid destination_id", ErrBookingValidation)
+}
+
+func NewBooking(firstname string, lastname string, gender string, birthday string, launchpadID LaunchpadID, destinationID DestinationID, launchDate string) (Booking, error) {
 	booking := Booking{
 		Firstname:     firstname,
 		Lastname:      lastname,

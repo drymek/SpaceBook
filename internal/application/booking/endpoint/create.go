@@ -17,7 +17,16 @@ func MakeCreateEndpoint(_ logger.Logger, service service.BookingService) endpoin
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		r := request.(requestx.BookingRequest)
 
-		booking, err := model.NewBooking(r.Firstname, r.Lastname, r.Gender, r.Birthday, r.LaunchpadID, r.DestinationID, r.LaunchDate)
+		booking, err := model.NewBooking(
+			r.Firstname,
+			r.Lastname,
+			r.Gender,
+			r.Birthday,
+			model.LaunchpadID(r.LaunchpadID),
+			model.DestinationID(r.DestinationID),
+			r.LaunchDate,
+		)
+
 		if err != nil {
 			return nil, httpx.NewBadRequest(err)
 		}

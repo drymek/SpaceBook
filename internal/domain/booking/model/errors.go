@@ -2,4 +2,4 @@ package model
 
 import "errors"
 
-var ErrInvalidFirstname = errors.New("invalid firstname")
+var ErrBookingValidation = errors.New("booking validation error")
