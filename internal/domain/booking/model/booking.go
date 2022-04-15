@@ -44,7 +44,7 @@ func (b Booking) validateLaunchpadID() error {
 
 func (b Booking) validateDestinationID() error {
 	switch b.DestinationID {
-	case Mars, Moon, Pluto, Asteroid, Belt, Europa, Titan, Ganymede:
+	case Mars, Moon, Pluto, AsteroidBelt, Europa, Titan, Ganymede:
 		return nil
 	}
 

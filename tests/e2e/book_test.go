@@ -34,7 +34,7 @@ func TestBookSuite(t *testing.T) {
 
 	s.AppDependencies = server.Dependencies{
 		Logger:         logger.NewNullLogger(),
-		BookingService: service.NewBookingService(),
+		BookingService: service.NewBookingService(nil),
 		Config:         c,
 	}
 

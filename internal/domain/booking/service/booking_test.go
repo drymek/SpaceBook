@@ -1,8 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"testing"
 
+	"dryka.pl/SpaceBook/internal/domain/booking/model"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -16,6 +19,116 @@ func TestDayDateSuite(t *testing.T) {
 	suite.Run(t, s)
 }
 
-func (s *BookingSuite) TestXXX() {
+type SpaceXClientMock struct {
+	mock.Mock
+}
 
+func (s *SpaceXClientMock) GetLaunches(date model.DayDate, id model.LaunchpadID) ([]string, error) {
+	args := s.Called(date, id)
+	return args.Get(0).([]string), args.Error(1)
+}
+
+func (s *BookingSuite) TestPersist() {
+	date, err := model.NewDayDateFromString("2020-01-01")
+	s.NoError(err)
+	booking := model.Booking{
+		ID:            "123",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   model.VandenbergSpaceForceBase1,
+		DestinationID: model.Pluto,
+		LaunchDate:    date,
+	}
+	repository := new(BookingRepositoryMock)
+	repository.On("Create", booking).Return(nil)
+
+	spacexClient := new(SpaceXClientMock)
+	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, nil)
+	err = NewBookingService(repository, spacexClient).Create(booking)
+	s.NoError(err)
+	repository.AssertCalled(s.T(), "Create", booking)
+}
+
+func (s *BookingSuite) TestSpaceXBookingExists() {
+	date, err := model.NewDayDateFromString("2020-01-01")
+	s.NoError(err)
+	booking := model.Booking{
+		ID:            "123",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   model.VandenbergSpaceForceBase1,
+		DestinationID: model.Pluto,
+		LaunchDate:    date,
+	}
+	repository := new(BookingRepositoryMock)
+	repository.On("Create", booking).Return(nil)
+
+	spacexClient := new(SpaceXClientMock)
+	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{"3a50ae198086"}, nil)
+	err = NewBookingService(repository, spacexClient).Create(booking)
+	s.Error(err)
+	s.ErrorIs(err, ErrBookingDateConflict)
+	repository.AssertNotCalled(s.T(), "Create", mock.Anything)
+}
+
+func (s *BookingSuite) TestSpaceXBookingClientError() {
+	date, err := model.NewDayDateFromString("2020-01-01")
+	s.NoError(err)
+	booking := model.Booking{
+		ID:            "123",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   model.VandenbergSpaceForceBase1,
+		DestinationID: model.Pluto,
+		LaunchDate:    date,
+	}
+	repository := new(BookingRepositoryMock)
+	repository.On("Create", booking).Return(nil)
+
+	spacexClient := new(SpaceXClientMock)
+	ErrSpacex := fmt.Errorf("SpaceX error")
+	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, ErrSpacex)
+	err = NewBookingService(repository, spacexClient).Create(booking)
+	s.Error(err)
+	s.ErrorIs(err, ErrSpacex)
+	repository.AssertNotCalled(s.T(), "Create", mock.Anything)
+}
+
+func (s *BookingSuite) TestWrongDestination() {
+	date, err := model.NewDayDateFromString("2020-01-01")
+	s.NoError(err)
+	booking := model.Booking{
+		ID:            "123",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   model.VandenbergSpaceForceBase1,
+		DestinationID: model.Moon,
+		LaunchDate:    date,
+	}
+	repository := new(BookingRepositoryMock)
+	repository.On("Create", booking).Return(nil)
+
+	spacexClient := new(SpaceXClientMock)
+	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, nil)
+	err = NewBookingService(repository, spacexClient).Create(booking)
+	s.Error(err)
+	s.ErrorIs(err, ErrBookingDateTimetable)
+	repository.AssertNotCalled(s.T(), "Create", mock.Anything)
+}
+
+type BookingRepositoryMock struct {
+	mock.Mock
+}
+
+func (b *BookingRepositoryMock) Create(booking model.Booking) error {
+	args := b.Called(booking)
+	return args.Error(0)
 }
