@@ -17,22 +17,30 @@ func MakeCreateEndpoint(_ logger.Logger, service service.BookingService) endpoin
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		r := request.(requestx.BookingRequest)
 
+		birthday, err := model.NewDayDateFromString(r.Birthday)
+		if err != nil {
+			return nil, httpx.NewBadRequest(err)
+		}
+
+		launchDate, err := model.NewDayDateFromString(r.LaunchDate)
+		if err != nil {
+			return nil, httpx.NewBadRequest(err)
+		}
+
 		booking, err := model.NewBooking(
 			r.Firstname,
 			r.Lastname,
 			r.Gender,
-			r.Birthday,
+			birthday,
 			model.LaunchpadID(r.LaunchpadID),
 			model.DestinationID(r.DestinationID),
-			r.LaunchDate,
+			launchDate,
 		)
-
 		if err != nil {
 			return nil, httpx.NewBadRequest(err)
 		}
 
 		err = service.Create(booking)
-
 		if err != nil {
 			return nil, httpx.NewBadRequest(err)
 		}

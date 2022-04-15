@@ -25,52 +25,63 @@ func TestSuite(t *testing.T) {
 }
 
 func (s *BookingSuite) TestValidBooking() {
+	launchDate, err := NewDayDateFromString("2022-02-01")
+	s.NoError(err)
+	birthday, err := NewDayDateFromString("1999-02-01")
+	s.NoError(err)
 	b := Booking{
 		ID:            "",
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "",
+		Birthday:      birthday,
 		LaunchpadID:   s.ValidLaunchpadID,
 		DestinationID: s.ValidDestinationID,
-		LaunchDate:    "",
+		LaunchDate:    launchDate,
 	}
-
-	err := b.Validate()
+	err = b.Validate()
 	s.NoError(err)
 }
 
 func (s *BookingSuite) TestInvalidBookingLaunchpad() {
+	launchDate, err := NewDayDateFromString("2022-01-01")
+	s.NoError(err)
+	birthday, err := NewDayDateFromString("1999-02-01")
+	s.NoError(err)
 	b := Booking{
 		ID:            "",
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "",
+		Birthday:      birthday,
 		LaunchpadID:   s.InvalidLaunchpadID,
 		DestinationID: Mars,
-		LaunchDate:    "",
+		LaunchDate:    launchDate,
 	}
 
-	err := b.Validate()
+	err = b.Validate()
 	s.Error(err)
 	s.True(errors.Is(err, ErrBookingValidation))
 	s.Contains(err.Error(), "launchpad_id")
 }
 
 func (s *BookingSuite) TestInvalidBookingDestination() {
+	launchDate, err := NewDayDateFromString("2022-01-01")
+	s.NoError(err)
+	birthday, err := NewDayDateFromString("1999-02-01")
+	s.NoError(err)
 	b := Booking{
 		ID:            "",
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "",
+		Birthday:      birthday,
 		LaunchpadID:   s.ValidLaunchpadID,
 		DestinationID: s.InvalidDestinationID,
-		LaunchDate:    "",
+		LaunchDate:    launchDate,
 	}
 
-	err := b.Validate()
+	err = b.Validate()
 	s.Error(err)
 	s.True(errors.Is(err, ErrBookingValidation))
 	s.Contains(err.Error(), "destination_id")

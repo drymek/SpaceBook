@@ -9,10 +9,10 @@ type Booking struct {
 	Firstname     string        `json:"firstname"`
 	Lastname      string        `json:"lastname"`
 	Gender        string        `json:"gender"`
-	Birthday      string        `json:"birthday"`
+	Birthday      DayDate       `json:"birthday"`
 	LaunchpadID   LaunchpadID   `json:"launchpad_id"`
 	DestinationID DestinationID `json:"destination_id"`
-	LaunchDate    string        `json:"launchDate"`
+	LaunchDate    DayDate       `json:"launchDate"`
 }
 
 func (b Booking) Validate() error {
@@ -51,7 +51,7 @@ func (b Booking) validateDestinationID() error {
 	return fmt.Errorf("%w: invalid destination_id", ErrBookingValidation)
 }
 
-func NewBooking(firstname string, lastname string, gender string, birthday string, launchpadID LaunchpadID, destinationID DestinationID, launchDate string) (Booking, error) {
+func NewBooking(firstname string, lastname string, gender string, birthday DayDate, launchpadID LaunchpadID, destinationID DestinationID, launchDate DayDate) (Booking, error) {
 	booking := Booking{
 		Firstname:     firstname,
 		Lastname:      lastname,
