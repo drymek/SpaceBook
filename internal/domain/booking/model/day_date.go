@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -14,12 +15,12 @@ var format = "2006-01-02"
 func (d *DayDate) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
-		return err
+		return fmt.Errorf("%w: failed to unmarshal date", ErrDayDateValidation)
 	}
 
 	t, err := time.Parse(format, s)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: failed to parse date", ErrDayDateValidation)
 	}
 
 	d.Time = t
@@ -37,7 +38,7 @@ func (d *DayDate) String() string {
 func NewDayDateFromString(value string) (DayDate, error) {
 	d, err := time.Parse(format, value)
 	if err != nil {
-		return DayDate{}, err
+		return DayDate{}, fmt.Errorf("%w: failed to parse date", ErrDayDateValidation)
 	}
 
 	return DayDate{

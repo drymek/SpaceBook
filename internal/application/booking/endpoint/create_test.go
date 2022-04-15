@@ -27,31 +27,100 @@ func (s *EndpointSuite) TestHandleErrorFromService() {
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "",
-		LaunchpadID:   "",
-		DestinationID: "",
-		LaunchDate:    "",
+		Birthday:      "2020-01-01",
+		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
+		DestinationID: model.Moon,
+		LaunchDate:    "2020-01-01",
 	}
 
+	serviceErr := service2.ErrInvalidBookingDate(nil)
 	service := new(BookingServiceMock)
 	service.On("Create", mock.Anything).
-		Return(service2.ErrInvalidBookingDate(nil))
+		Return(serviceErr)
 
 	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
 
 	s.Error(err)
+	s.ErrorIs(err, serviceErr)
 	s.Equal(http.StatusBadRequest, err.(httpx.StatusCodeHolder).StatusCode())
 }
 
 func (s *EndpointSuite) TestHandleErrorFromBooking() {
-	req := request.BookingRequest{}
+	req := request.BookingRequest{
+		Firstname:     "",
+		Lastname:      "",
+		Gender:        "",
+		Birthday:      "2020-01-01",
+		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
+		DestinationID: model.Moon,
+		LaunchDate:    "2020-01-01",
+	}
 
 	service := new(BookingServiceMock)
 
 	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
 
 	s.Error(err)
+	s.ErrorIs(err, model.ErrBookingValidation)
 	s.Equal(http.StatusBadRequest, err.(httpx.StatusCodeHolder).StatusCode())
+}
+
+func (s *EndpointSuite) TestHandleErrorLaunchDate() {
+	req := request.BookingRequest{
+		Firstname:     "Marcin",
+		Lastname:      "",
+		Gender:        "",
+		Birthday:      "2020-01-01",
+		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
+		DestinationID: model.Moon,
+		LaunchDate:    "xxxx",
+	}
+
+	service := new(BookingServiceMock)
+
+	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
+
+	s.Error(err)
+	s.ErrorIs(err, model.ErrDayDateValidation)
+	s.Equal(http.StatusBadRequest, err.(httpx.StatusCodeHolder).StatusCode())
+}
+
+func (s *EndpointSuite) TestHandleErrorBirthday() {
+	req := request.BookingRequest{
+		Firstname:     "Marcin",
+		Lastname:      "",
+		Gender:        "",
+		Birthday:      "xxxx",
+		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
+		DestinationID: model.Moon,
+		LaunchDate:    "2020-01-01",
+	}
+
+	service := new(BookingServiceMock)
+
+	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
+
+	s.Error(err)
+	s.ErrorIs(err, model.ErrDayDateValidation)
+	s.Equal(http.StatusBadRequest, err.(httpx.StatusCodeHolder).StatusCode())
+}
+
+func (s *EndpointSuite) TestHandleSuccess() {
+	req := request.BookingRequest{
+		Firstname:     "Marcin",
+		Lastname:      "",
+		Gender:        "",
+		Birthday:      "2000-01-01",
+		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
+		DestinationID: string(model.Moon),
+		LaunchDate:    "2020-01-01",
+	}
+
+	service := new(BookingServiceMock)
+	service.On("Create", mock.Anything).
+		Return(nil)
+	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
+	s.NoError(err)
 }
 
 type BookingServiceMock struct {
