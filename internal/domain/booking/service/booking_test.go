@@ -124,8 +124,47 @@ func (s *BookingSuite) TestWrongDestination() {
 	repository.AssertNotCalled(s.T(), "Create", mock.Anything)
 }
 
+func (s *BookingSuite) TestListError() {
+	repository := new(BookingRepositoryMock)
+	ErrListing := fmt.Errorf("Listing error")
+	repository.On("List").Return([]model.Booking{}, ErrListing)
+	spacexClient := new(SpaceXClientMock)
+
+	_, err := NewBookingService(repository, spacexClient).List()
+	s.Error(err)
+	s.ErrorIs(err, ErrListing)
+}
+
+func (s *BookingSuite) TestListSuccess() {
+	repository := new(BookingRepositoryMock)
+	date, err := model.NewDayDateFromString("2020-01-01")
+	list := []model.Booking{
+		{
+			ID:            "123",
+			Firstname:     "Marcin",
+			Lastname:      "Dryka",
+			Gender:        "Male",
+			Birthday:      date,
+			LaunchpadID:   model.VandenbergSpaceForceBase1,
+			DestinationID: model.Moon,
+			LaunchDate:    model.DayDate{},
+		},
+	}
+	repository.On("List").Return(list, nil)
+	spacexClient := new(SpaceXClientMock)
+
+	got, err := NewBookingService(repository, spacexClient).List()
+	s.NoError(err)
+	s.Equal(got, list)
+}
+
 type BookingRepositoryMock struct {
 	mock.Mock
+}
+
+func (b *BookingRepositoryMock) List() ([]model.Booking, error) {
+	args := b.Called()
+	return args.Get(0).([]model.Booking), args.Error(1)
 }
 
 func (b *BookingRepositoryMock) Create(booking *model.Booking) error {
