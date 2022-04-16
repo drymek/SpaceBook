@@ -40,3 +40,7 @@ func NewBadRequest(err error) error {
 func NewInternalServerError(err error) error {
 	return NewErrorWrapper(http.StatusInternalServerError, err, "Internal Server Error")
 }
+
+func NewNotFound(err error) error {
+	return NewErrorWrapper(http.StatusNotFound, err, "Not Found")
+}

@@ -9,6 +9,11 @@ type BookingServiceMock struct {
 	mock.Mock
 }
 
+func (b *BookingServiceMock) Delete(id string) error {
+	args := b.Called(id)
+	return args.Error(0)
+}
+
 func (b *BookingServiceMock) List() ([]model.Booking, error) {
 	args := b.Called()
 	return args.Get(0).([]model.Booking), args.Error(1)

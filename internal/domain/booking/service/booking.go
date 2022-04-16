@@ -11,12 +11,17 @@ import (
 type BookingService interface {
 	Create(booking *model.Booking) error
 	List() ([]model.Booking, error)
+	Delete(id string) error
 }
 
 type bookingService struct {
 	repository repository.BookingRepository
 	client     spacex.SpaceXClient
 	timetable  Timetable
+}
+
+func (b *bookingService) Delete(id string) error {
+	return b.repository.Delete(id)
 }
 
 func (b *bookingService) List() ([]model.Booking, error) {
