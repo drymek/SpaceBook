@@ -14,7 +14,7 @@ import (
 )
 
 func MakeCreateEndpoint(_ logger.Logger, service service.BookingService) endpoint.Endpoint {
-	return func(_ context.Context, request interface{}) (interface{}, error) {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		r := request.(requestx.BookingRequest)
 
 		birthday, err := model.NewDayDateFromString(r.Birthday)
@@ -41,7 +41,7 @@ func MakeCreateEndpoint(_ logger.Logger, service service.BookingService) endpoin
 			return nil, httpx.NewBadRequest(err)
 		}
 
-		err = service.Create(&booking)
+		err = service.Create(ctx, &booking)
 		if err != nil {
 			return nil, httpx.NewBadRequest(err)
 		}
