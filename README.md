@@ -107,3 +107,14 @@ Date: Sat, 16 Apr 2022 01:46:35 GMT
     ]
 }
 ```
+
+## Delete
+
+```bash
+http DELETE :8080/bookings/123
+HTTP/1.1 204 No Content
+Access-Control-Allow-Headers: Origin, Content-Type
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Origin: *
+Date: Sat, 16 Apr 2022 21:27:53 GMT
+```
