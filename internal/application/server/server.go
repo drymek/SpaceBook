@@ -21,6 +21,13 @@ func NewServer(d Dependencies) *mux.Router {
 		kithttp.ServerErrorEncoder(httpx.EncodeError(d.Logger)),
 	)
 
+	listHandler := kithttp.NewServer(
+		endpoint.MakeListEndpoint(d.Logger, d.BookingService),
+		request.DecodeListRequest(d.Logger),
+		httpx.EncodeResponse(d.Logger),
+		kithttp.ServerErrorEncoder(httpx.EncodeError(d.Logger)),
+	)
+
 	app, err := newrelic.NewApplication(
 		newrelic.ConfigAppName(d.Config.GetNewRelicConfigAppName()),
 		newrelic.ConfigLicense(d.Config.GetNewRelicConfigLicense()),
@@ -34,6 +41,6 @@ func NewServer(d Dependencies) *mux.Router {
 	}
 
 	r.Handle(newrelic.WrapHandle(app, "/bookings", AccessControl(createHandler))).Methods(http.MethodOptions, http.MethodPost)
-
+	r.Handle(newrelic.WrapHandle(app, "/bookings", AccessControl(listHandler))).Methods(http.MethodOptions, http.MethodGet)
 	return r
 }

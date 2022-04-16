@@ -51,8 +51,9 @@ func (b Booking) validateDestinationID() error {
 	return fmt.Errorf("%w: invalid destination_id", ErrBookingValidation)
 }
 
-func NewBooking(firstname string, lastname string, gender string, birthday DayDate, launchpadID LaunchpadID, destinationID DestinationID, launchDate DayDate) (Booking, error) {
+func NewBooking(id string, firstname string, lastname string, gender string, birthday DayDate, launchpadID LaunchpadID, destinationID DestinationID, launchDate DayDate) (Booking, error) {
 	booking := Booking{
+		ID:            id,
 		Firstname:     firstname,
 		Lastname:      lastname,
 		Gender:        gender,

@@ -138,6 +138,7 @@ func (s *BookingSuite) TestListError() {
 func (s *BookingSuite) TestListSuccess() {
 	repository := new(BookingRepositoryMock)
 	date, err := model.NewDayDateFromString("2020-01-01")
+	s.NoError(err)
 	list := []model.Booking{
 		{
 			ID:            "123",

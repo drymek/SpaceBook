@@ -33,10 +33,12 @@ func TestBookSuite(t *testing.T) {
 		t.Fatalf("invalid config: %v", err)
 	}
 
+	r := repository.NewBookingRepository()
 	s.AppDependencies = server.Dependencies{
 		Logger:         logger.NewNullLogger(),
-		BookingService: service.NewBookingService(repository.NewBookingRepository(), service.NewStaticSpaceXClient()),
+		BookingService: service.NewBookingService(r, service.NewStaticSpaceXClient()),
 		Config:         c,
+		Repository:     r,
 	}
 
 	s.ValidLaunchpadID = model.VandenbergSpaceForceBase1
@@ -52,6 +54,7 @@ func (s *BookSuite) TestBooking() {
 	defer srv.Close()
 
 	body := fmt.Sprintf(`{
+		"id": "123",
 		"firstname": "John",
 		"lastname": "Doe",
 		"gender": "Male",
@@ -70,8 +73,15 @@ func (s *BookSuite) TestBooking() {
 	s.Nil(err2)
 
 	s.Contains(string(got), "id")
+	s.NotContains(string(got), `{"id":""}`)
 
 	s.Equal(http.StatusOK, res.StatusCode, "Expected status code 200", string(got))
+}
+
+func (s *BookSuite) SetupTest() {
+	r := repository.NewBookingRepository()
+	s.AppDependencies.Repository = r
+	s.AppDependencies.BookingService = service.NewBookingService(r, service.NewStaticSpaceXClient())
 }
 
 func (s *BookSuite) TestInvalidBookingLaunchpad() {
@@ -126,4 +136,34 @@ func (s *BookSuite) TestInvalidBookingDestination() {
 	s.Equal(`{"error":"booking validation error: invalid destination_id"}`, string(got))
 	s.Nil(err)
 	s.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400")
+}
+
+func (s *BookSuite) TestBookingList() {
+	srv := httptest.NewServer(server.NewServer(s.AppDependencies))
+	defer srv.Close()
+	date, err := model.NewDayDateFromString("2022-02-02")
+	s.NoError(err)
+	err = s.AppDependencies.Repository.Create(&model.Booking{
+		ID:            "123",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   "",
+		DestinationID: "",
+		LaunchDate:    date,
+	})
+	s.NoError(err)
+
+	res, err := http.Get(srv.URL + "/bookings")
+	s.NoError(err)
+	got, err := ioutil.ReadAll(res.Body)
+	err2 := res.Body.Close()
+	s.Nil(err)
+	s.Nil(err2)
+
+	s.Equal(`{"items":[{"id":"123","firstname":"Marcin","lastname":"Dryka","gender":"Male","birthday":"2022-02-02","launchpadID":"","destinationID":"","launchDate":"2022-02-02"}]}
+`, string(got))
+	s.Nil(err)
+	s.Equal(http.StatusOK, res.StatusCode, "Expected status code 200")
 }
