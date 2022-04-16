@@ -6,6 +6,7 @@ import (
 	"dryka.pl/SpaceBook/internal/domain/booking/model"
 	"dryka.pl/SpaceBook/internal/domain/booking/repository"
 	"dryka.pl/SpaceBook/internal/domain/booking/spacex"
+	"github.com/google/uuid"
 )
 
 type BookingService interface {
@@ -29,6 +30,11 @@ func (b *bookingService) List() ([]model.Booking, error) {
 }
 
 func (b *bookingService) Create(booking *model.Booking) error {
+	err := booking.Validate()
+	if err != nil {
+		return err
+	}
+
 	ctx := context.Background()
 	launches, err := b.client.GetLaunches(ctx, booking.LaunchDate, booking.LaunchpadID)
 	if err != nil {
@@ -45,7 +51,14 @@ func (b *bookingService) Create(booking *model.Booking) error {
 		return ErrBookingService(ErrBookingDateTimetable)
 	}
 
+	if booking.ID == "" {
+		booking.ID = b.GenerateID()
+	}
 	return b.repository.Create(booking)
+}
+
+func (b *bookingService) GenerateID() string {
+	return uuid.New().String()
 }
 
 func NewBookingService(repository repository.BookingRepository, client spacex.SpaceXClient) BookingService {

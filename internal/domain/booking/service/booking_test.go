@@ -30,7 +30,7 @@ func (s *SpaceXClientMock) GetLaunches(ctx context.Context, date model.DayDate, 
 }
 
 func (s *BookingSuite) TestPersist() {
-	date, err := model.NewDayDateFromString("2020-01-01")
+	date, err := model.NewDayDateFromString("2222-01-17")
 	s.NoError(err)
 	booking := &model.Booking{
 		ID:            "123",
@@ -39,7 +39,7 @@ func (s *BookingSuite) TestPersist() {
 		Gender:        "Male",
 		Birthday:      date,
 		LaunchpadID:   model.VandenbergSpaceForceBase1,
-		DestinationID: model.Pluto,
+		DestinationID: model.AsteroidBelt,
 		LaunchDate:    date,
 	}
 	repository := new(BookingRepositoryMock)
@@ -52,8 +52,32 @@ func (s *BookingSuite) TestPersist() {
 	repository.AssertCalled(s.T(), "Create", booking)
 }
 
+func (s *BookingSuite) TestPersistWithoutID() {
+	date, err := model.NewDayDateFromString("2222-01-17")
+	s.NoError(err)
+	booking := &model.Booking{
+		ID:            "",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   model.VandenbergSpaceForceBase1,
+		DestinationID: model.AsteroidBelt,
+		LaunchDate:    date,
+	}
+	repository := new(BookingRepositoryMock)
+	repository.On("Create", booking).Return(nil)
+
+	spacexClient := new(SpaceXClientMock)
+	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, nil)
+	err = NewBookingService(repository, spacexClient).Create(booking)
+	s.NoError(err)
+	repository.AssertCalled(s.T(), "Create", booking)
+	s.Len(booking.ID, 36)
+}
+
 func (s *BookingSuite) TestSpaceXBookingExists() {
-	date, err := model.NewDayDateFromString("2020-01-01")
+	date, err := model.NewDayDateFromString("2222-01-17")
 	s.NoError(err)
 	booking := &model.Booking{
 		ID:            "123",
@@ -62,7 +86,7 @@ func (s *BookingSuite) TestSpaceXBookingExists() {
 		Gender:        "Male",
 		Birthday:      date,
 		LaunchpadID:   model.VandenbergSpaceForceBase1,
-		DestinationID: model.Pluto,
+		DestinationID: model.AsteroidBelt,
 		LaunchDate:    date,
 	}
 	repository := new(BookingRepositoryMock)
@@ -77,7 +101,7 @@ func (s *BookingSuite) TestSpaceXBookingExists() {
 }
 
 func (s *BookingSuite) TestSpaceXBookingClientError() {
-	date, err := model.NewDayDateFromString("2020-01-01")
+	date, err := model.NewDayDateFromString("2222-01-17")
 	s.NoError(err)
 	booking := &model.Booking{
 		ID:            "123",
@@ -86,7 +110,7 @@ func (s *BookingSuite) TestSpaceXBookingClientError() {
 		Gender:        "Male",
 		Birthday:      date,
 		LaunchpadID:   model.VandenbergSpaceForceBase1,
-		DestinationID: model.Pluto,
+		DestinationID: model.AsteroidBelt,
 		LaunchDate:    date,
 	}
 	repository := new(BookingRepositoryMock)
@@ -102,7 +126,7 @@ func (s *BookingSuite) TestSpaceXBookingClientError() {
 }
 
 func (s *BookingSuite) TestWrongDestination() {
-	date, err := model.NewDayDateFromString("2020-01-01")
+	date, err := model.NewDayDateFromString("2222-01-17")
 	s.NoError(err)
 	booking := &model.Booking{
 		ID:            "123",
