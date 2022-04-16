@@ -31,8 +31,53 @@ task test
 ```
 
 # Production
-To build project for production, run:
+To run project for production, use:
 
 ```bash
-@TODO
+docker run -p 8080:8080  drymek/spacebook:latest
+```
+
+# Usage examples
+
+## Book
+```bash
+echo '{ "id": "1234", "firstname": "John", "lastname": "Doe", "gender": "Male", "birthday": "2000-07-21", "launchpadID": "5e9e4501f5090910d4566f83", "destinationID": "Mars", "launchDate": "2022-01-17"}' | http POST :8080/bookings
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers: Origin, Content-Type
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Origin: *
+Content-Length: 14
+Content-Type: text/plain; charset=utf-8
+Date: Sat, 16 Apr 2022 01:44:43 GMT
+
+{
+    "id": "1234"
+}
+```
+
+## Get all bookings
+```bash
+http :8080/bookings
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers: Origin, Content-Type
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Origin: *
+Content-Length: 192
+Content-Type: text/plain; charset=utf-8
+Date: Sat, 16 Apr 2022 01:46:35 GMT
+
+{
+    "items": [
+        {
+            "birthday": "2000-07-21",
+            "destinationID": "Mars",
+            "firstname": "John",
+            "gender": "Male",
+            "id": "1234",
+            "lastname": "Doe",
+            "launchDate": "2022-01-17",
+            "launchpadID": "5e9e4501f5090910d4566f83"
+        }
+    ]
+}
 ```
