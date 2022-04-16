@@ -12,7 +12,8 @@ import (
 	"dryka.pl/SpaceBook/internal/domain/booking/service"
 	"dryka.pl/SpaceBook/internal/domain/booking/spacex"
 	"dryka.pl/SpaceBook/internal/infrastructure/logger"
-	"dryka.pl/SpaceBook/internal/infrastructure/persistence/inmemory/repository"
+	"dryka.pl/SpaceBook/internal/infrastructure/persistence/postgres"
+	"dryka.pl/SpaceBook/internal/infrastructure/persistence/postgres/repository"
 )
 
 func main() {
@@ -27,7 +28,17 @@ func main() {
 		panic(err)
 	}
 
-	r := repository.NewBookingRepository()
+	client, err := postgres.NewConnection(
+		c.GetDatabase().GetDatabaseHost(),
+		c.GetDatabase().GetDatabasePort(),
+		c.GetDatabase().GetDatabaseUser(),
+		c.GetDatabase().GetDatabasePassword(),
+		c.GetDatabase().GetDatabaseName(),
+	)
+	if err != nil {
+		panic(err)
+	}
+	r := repository.NewBookingRepository(client)
 	dependencies := server.Dependencies{
 		Logger:         l,
 		BookingService: service.NewBookingService(r, spacex.NewSpaceXClient()),
