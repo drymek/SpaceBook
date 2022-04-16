@@ -163,6 +163,16 @@ type BookingRepositoryMock struct {
 	mock.Mock
 }
 
+func (b *BookingRepositoryMock) Find(s string) (model.Booking, error) {
+	args := b.Called(s)
+	return args.Get(0).(model.Booking), args.Error(1)
+}
+
+func (b *BookingRepositoryMock) Delete(s string) error {
+	args := b.Called(s)
+	return args.Error(0)
+}
+
 func (b *BookingRepositoryMock) List() ([]model.Booking, error) {
 	args := b.Called()
 	return args.Get(0).([]model.Booking), args.Error(1)
