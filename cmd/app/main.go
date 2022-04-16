@@ -10,6 +10,7 @@ import (
 	"dryka.pl/SpaceBook/internal/application/config"
 	"dryka.pl/SpaceBook/internal/application/server"
 	"dryka.pl/SpaceBook/internal/domain/booking/service"
+	"dryka.pl/SpaceBook/internal/domain/booking/spacex"
 	"dryka.pl/SpaceBook/internal/infrastructure/logger"
 	"dryka.pl/SpaceBook/internal/infrastructure/persistence/inmemory/repository"
 )
@@ -29,7 +30,7 @@ func main() {
 	r := repository.NewBookingRepository()
 	dependencies := server.Dependencies{
 		Logger:         l,
-		BookingService: service.NewBookingService(r, service.NewStaticSpaceXClient()),
+		BookingService: service.NewBookingService(r, spacex.NewSpaceXClient()),
 		Config:         c,
 		Repository:     r,
 	}

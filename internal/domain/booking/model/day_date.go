@@ -35,6 +35,14 @@ func (d *DayDate) String() string {
 	return d.Time.Format(format)
 }
 
+func (d *DayDate) Start() time.Time {
+	return time.Date(d.Year(), d.Month(), d.Day(), 0, 0, 0, 0, d.Location())
+}
+
+func (d *DayDate) End() time.Time {
+	return time.Date(d.Year(), d.Month(), d.Day(), 23, 59, 59, 0, d.Location())
+}
+
 func NewDayDateFromString(value string) (DayDate, error) {
 	d, err := time.Parse(format, value)
 	if err != nil {

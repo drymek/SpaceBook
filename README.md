@@ -55,6 +55,23 @@ Date: Sat, 16 Apr 2022 01:44:43 GMT
 }
 ```
 
+## Booking error
+```bash
+$ echo '{ "id": "1234", "firstname": "John", "lastname": "Doe", "gender": "Male", "birthday": "2000-07-21", "launchpadID": "5e9e4502f509094188566f88", "destinationID": "Asteroid Belt", "launchDate": "2022-07-01"}' | http POST :8080/bookings
+
+HTTP/1.1 400 Bad Request
+Access-Control-Allow-Headers: Origin, Content-Type
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Origin: *
+Content-Length: 75
+Content-Type: text/plain; charset=utf-8
+Date: Sat, 16 Apr 2022 13:39:46 GMT
+
+{
+    "error": "booking service error: SpaceX already has a launch on this date"
+}
+```
+
 ## Get all bookings
 ```bash
 http :8080/bookings

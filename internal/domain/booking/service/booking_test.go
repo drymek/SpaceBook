@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -23,7 +24,7 @@ type SpaceXClientMock struct {
 	mock.Mock
 }
 
-func (s *SpaceXClientMock) GetLaunches(date model.DayDate, id model.LaunchpadID) ([]string, error) {
+func (s *SpaceXClientMock) GetLaunches(ctx context.Context, date model.DayDate, id model.LaunchpadID) ([]string, error) {
 	args := s.Called(date, id)
 	return args.Get(0).([]string), args.Error(1)
 }

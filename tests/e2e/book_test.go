@@ -12,6 +12,7 @@ import (
 	"dryka.pl/SpaceBook/internal/application/server"
 	"dryka.pl/SpaceBook/internal/domain/booking/model"
 	"dryka.pl/SpaceBook/internal/domain/booking/service"
+	"dryka.pl/SpaceBook/internal/domain/booking/spacex"
 	"dryka.pl/SpaceBook/internal/infrastructure/logger"
 	"dryka.pl/SpaceBook/internal/infrastructure/persistence/inmemory/repository"
 	"github.com/stretchr/testify/suite"
@@ -36,7 +37,7 @@ func TestBookSuite(t *testing.T) {
 	r := repository.NewBookingRepository()
 	s.AppDependencies = server.Dependencies{
 		Logger:         logger.NewNullLogger(),
-		BookingService: service.NewBookingService(r, service.NewStaticSpaceXClient()),
+		BookingService: service.NewBookingService(r, spacex.NewStaticSpaceXClient()),
 		Config:         c,
 		Repository:     r,
 	}
@@ -81,7 +82,7 @@ func (s *BookSuite) TestBooking() {
 func (s *BookSuite) SetupTest() {
 	r := repository.NewBookingRepository()
 	s.AppDependencies.Repository = r
-	s.AppDependencies.BookingService = service.NewBookingService(r, service.NewStaticSpaceXClient())
+	s.AppDependencies.BookingService = service.NewBookingService(r, spacex.NewStaticSpaceXClient())
 }
 
 func (s *BookSuite) TestInvalidBookingLaunchpad() {

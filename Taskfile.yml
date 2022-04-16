@@ -23,7 +23,6 @@ tasks:
 
   dev:
     desc: Run development environment
-    deps: ["build"]
     cmds:
       - docker-compose -f deployments/dev/docker-compose.yml up -d
     env:
