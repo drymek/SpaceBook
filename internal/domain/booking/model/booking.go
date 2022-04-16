@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"time"
 )
 
 type Booking struct {
@@ -28,6 +29,10 @@ func (b Booking) Validate() error {
 	err = b.validateDestinationID()
 	if err != nil {
 		return err
+	}
+
+	if b.LaunchDate.Before(time.Now()) {
+		return fmt.Errorf("%w: past launch date", ErrBookingValidation)
 	}
 
 	return nil

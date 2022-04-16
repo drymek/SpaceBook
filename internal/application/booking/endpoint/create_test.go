@@ -27,10 +27,10 @@ func (s *EndpointSuite) TestHandleErrorFromService() {
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "2020-01-01",
+		Birthday:      "2222-01-17",
 		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
 		DestinationID: model.Moon,
-		LaunchDate:    "2020-01-01",
+		LaunchDate:    "2222-01-17",
 	}
 
 	serviceErr := service2.ErrBookingService(service2.ErrBookingDateConflict)
@@ -50,10 +50,10 @@ func (s *EndpointSuite) TestHandleErrorFromBooking() {
 		Firstname:     "",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "2020-01-01",
+		Birthday:      "2222-01-17",
 		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
 		DestinationID: model.Moon,
-		LaunchDate:    "2020-01-01",
+		LaunchDate:    "2222-01-17",
 	}
 
 	service := new(BookingServiceMock)
@@ -70,7 +70,7 @@ func (s *EndpointSuite) TestHandleErrorLaunchDate() {
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "2020-01-01",
+		Birthday:      "2222-01-17",
 		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
 		DestinationID: model.Moon,
 		LaunchDate:    "xxxx",
@@ -93,7 +93,7 @@ func (s *EndpointSuite) TestHandleErrorBirthday() {
 		Birthday:      "xxxx",
 		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
 		DestinationID: model.Moon,
-		LaunchDate:    "2020-01-01",
+		LaunchDate:    "2222-01-17",
 	}
 
 	service := new(BookingServiceMock)
@@ -110,10 +110,10 @@ func (s *EndpointSuite) TestHandleSuccess() {
 		Firstname:     "Marcin",
 		Lastname:      "",
 		Gender:        "",
-		Birthday:      "2000-01-01",
+		Birthday:      "2222-01-17",
 		LaunchpadID:   string(model.VandenbergSpaceForceBase1),
-		DestinationID: string(model.Moon),
-		LaunchDate:    "2020-01-01",
+		DestinationID: string(model.AsteroidBelt),
+		LaunchDate:    "2222-01-17",
 	}
 
 	service := new(BookingServiceMock)

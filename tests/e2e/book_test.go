@@ -44,7 +44,7 @@ func TestBookSuite(t *testing.T) {
 
 	s.ValidLaunchpadID = model.VandenbergSpaceForceBase1
 	s.InvalidLaunchpadID = "fake-id"
-	s.ValidDestinationID = model.Mars
+	s.ValidDestinationID = model.AsteroidBelt
 	s.InvalidDestinationID = "fake-id"
 
 	suite.Run(t, s)
@@ -62,7 +62,7 @@ func (s *BookSuite) TestBooking() {
 		"birthday": "2000-07-21",
 		"launchpadID": "%s",
 		"destinationID": "%s", 
-		"launchDate": "2022-01-17"
+		"launchDate": "2222-01-17"
 	}`, s.ValidLaunchpadID, s.ValidDestinationID)
 
 	requestBody := []byte(body)
@@ -96,7 +96,7 @@ func (s *BookSuite) TestInvalidBookingLaunchpad() {
 		"birthday": "2000-07-21",
 		"launchpadID": "%s",
 		"destinationID": "%s", 
-		"launchDate": "2022-01-20"
+		"launchDate": "2222-01-17"
 	}`, s.InvalidLaunchpadID, s.ValidDestinationID)
 
 	requestBody := []byte(body)
@@ -123,7 +123,7 @@ func (s *BookSuite) TestInvalidBookingDestination() {
 		"birthday": "2000-07-21",
 		"launchpadID": "%s",
 		"destinationID": "%s", 
-		"launchDate": "2022-01-20"
+		"launchDate": "2222-01-17"
 	}`, s.ValidLaunchpadID, s.InvalidDestinationID)
 
 	requestBody := []byte(body)
@@ -142,7 +142,7 @@ func (s *BookSuite) TestInvalidBookingDestination() {
 func (s *BookSuite) TestBookingList() {
 	srv := httptest.NewServer(server.NewServer(s.AppDependencies))
 	defer srv.Close()
-	date, err := model.NewDayDateFromString("2022-02-02")
+	date, err := model.NewDayDateFromString("2222-01-17")
 	s.NoError(err)
 	err = s.AppDependencies.Repository.Create(&model.Booking{
 		ID:            "123",
@@ -163,7 +163,7 @@ func (s *BookSuite) TestBookingList() {
 	s.Nil(err)
 	s.Nil(err2)
 
-	s.Equal(`{"items":[{"id":"123","firstname":"Marcin","lastname":"Dryka","gender":"Male","birthday":"2022-02-02","launchpadID":"","destinationID":"","launchDate":"2022-02-02"}]}
+	s.Equal(`{"items":[{"id":"123","firstname":"Marcin","lastname":"Dryka","gender":"Male","birthday":"2222-01-17","launchpadID":"","destinationID":"","launchDate":"2222-01-17"}]}
 `, string(got))
 	s.Nil(err)
 	s.Equal(http.StatusOK, res.StatusCode, "Expected status code 200")
@@ -172,7 +172,7 @@ func (s *BookSuite) TestBookingList() {
 func (s *BookSuite) TestBookingDelete() {
 	srv := httptest.NewServer(server.NewServer(s.AppDependencies))
 	defer srv.Close()
-	date, err := model.NewDayDateFromString("2022-02-02")
+	date, err := model.NewDayDateFromString("2222-01-17")
 	s.NoError(err)
 	booking := &model.Booking{
 		ID:            "123",
