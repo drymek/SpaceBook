@@ -104,8 +104,47 @@ func (b bookingRepository) Create(booking *model.Booking) error {
 }
 
 func (b bookingRepository) List() ([]model.Booking, error) {
-	//TODO implement me
-	panic("implement me")
+	stmt, err := b.db.Prepare(
+		`SELECT custom_id, firstname, lastname, gender, birthday, launchpad_id, destination_id, launch_date FROM bookings`,
+	)
+	if err != nil {
+		return []model.Booking{}, ErrPersistencePrepareError
+	}
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(stmt)
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return []model.Booking{}, ErrPersistence
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(rows)
+
+	bookings := make([]model.Booking, 0)
+	for rows.Next() {
+		booking := &model.Booking{}
+		var birthday time.Time
+		var launchDate time.Time
+		if err := rows.Scan(&booking.ID, &booking.Firstname, &booking.Lastname, &booking.Gender, &birthday, &booking.LaunchpadID, &booking.DestinationID, &launchDate); err != nil {
+			return []model.Booking{}, ErrPersistence
+		}
+
+		bookings = append(bookings, *booking)
+
+		if err := rows.Err(); err != nil {
+			return []model.Booking{}, ErrPersistence
+		}
+	}
+
+	return bookings, nil
 }
 
 func NewBookingRepository(db *sql.DB) repository.BookingRepository {

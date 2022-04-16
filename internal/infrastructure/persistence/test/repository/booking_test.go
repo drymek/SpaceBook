@@ -84,6 +84,37 @@ func (s *RepositoryIntegrationSuite) TestCreateAndFetch() {
 	}
 }
 
+func (s *RepositoryIntegrationSuite) TestList() {
+	date, err := model.NewDayDateFromString("2020-01-01")
+	s.NoError(err)
+	for i := range s.repositories {
+		s.T().Run(i, func(t *testing.T) {
+			s.mu.Lock()
+			defer s.mu.Unlock()
+			booking := &model.Booking{
+				ID:            "123",
+				Firstname:     "Marcin",
+				Lastname:      "Dryka",
+				Gender:        "Male",
+				Birthday:      date,
+				LaunchpadID:   model.VandenbergSpaceForceBase1,
+				DestinationID: model.Moon,
+				LaunchDate:    date,
+			}
+			got, err := s.repositories[i].List()
+			s.Empty(got)
+
+			err = s.repositories[i].Create(booking)
+
+			s.NoError(err)
+			got, err = s.repositories[i].List()
+			s.NoError(err)
+			s.NotEmpty(got)
+			s.Len(got, 1)
+		})
+	}
+}
+
 func (s *RepositoryIntegrationSuite) TestDelete() {
 	date, err := model.NewDayDateFromString("2020-01-01")
 	s.NoError(err)
