@@ -5,14 +5,14 @@ import (
 )
 
 type Booking struct {
-	ID            string        `json:"id"`
-	Firstname     string        `json:"firstname"`
-	Lastname      string        `json:"lastname"`
-	Gender        string        `json:"gender"`
-	Birthday      DayDate       `json:"birthday"`
-	LaunchpadID   LaunchpadID   `json:"launchpad_id"`
-	DestinationID DestinationID `json:"destination_id"`
-	LaunchDate    DayDate       `json:"launchDate"`
+	ID            string
+	Firstname     string
+	Lastname      string
+	Gender        string
+	Birthday      DayDate
+	LaunchpadID   LaunchpadID
+	DestinationID DestinationID
+	LaunchDate    DayDate
 }
 
 func (b Booking) Validate() error {

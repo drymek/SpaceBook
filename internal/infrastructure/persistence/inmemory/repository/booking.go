@@ -12,6 +12,29 @@ type bookingRepository struct {
 	collection map[string]*model.Booking
 }
 
+func (b *bookingRepository) Find(ID string) (model.Booking, error) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	if booking, ok := b.collection[ID]; ok {
+		return *booking, nil
+	}
+
+	return model.Booking{}, repository.ErrBookingNotFound
+}
+
+func (b *bookingRepository) Delete(ID string) error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	if _, ok := b.collection[ID]; !ok {
+		return repository.ErrBookingNotFound
+	}
+
+	delete(b.collection, ID)
+	return nil
+}
+
 func (b *bookingRepository) List() ([]model.Booking, error) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
