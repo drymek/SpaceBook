@@ -1,8 +1,11 @@
 package service
 
 import (
+	"context"
+
 	"dryka.pl/SpaceBook/internal/domain/booking/model"
 	"dryka.pl/SpaceBook/internal/domain/booking/repository"
+	"dryka.pl/SpaceBook/internal/domain/booking/spacex"
 )
 
 type BookingService interface {
@@ -12,7 +15,7 @@ type BookingService interface {
 
 type bookingService struct {
 	repository repository.BookingRepository
-	client     SpaceXClient
+	client     spacex.SpaceXClient
 	timetable  Timetable
 }
 
@@ -21,7 +24,8 @@ func (b *bookingService) List() ([]model.Booking, error) {
 }
 
 func (b *bookingService) Create(booking *model.Booking) error {
-	launches, err := b.client.GetLaunches(booking.LaunchDate, booking.LaunchpadID)
+	ctx := context.Background()
+	launches, err := b.client.GetLaunches(ctx, booking.LaunchDate, booking.LaunchpadID)
 	if err != nil {
 		return ErrBookingService(err)
 	}
@@ -39,7 +43,7 @@ func (b *bookingService) Create(booking *model.Booking) error {
 	return b.repository.Create(booking)
 }
 
-func NewBookingService(repository repository.BookingRepository, client SpaceXClient) BookingService {
+func NewBookingService(repository repository.BookingRepository, client spacex.SpaceXClient) BookingService {
 	return &bookingService{
 		repository: repository,
 		client:     client,

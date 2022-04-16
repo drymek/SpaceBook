@@ -18,6 +18,7 @@ services:
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - NEWRELIC_CONFIG_LICENSE=${NEWRELIC_CONFIG_LICENSE}
+      - DATABASE_HOST=database
 
   database:
     image: postgres
