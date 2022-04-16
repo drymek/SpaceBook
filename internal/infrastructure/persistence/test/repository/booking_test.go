@@ -103,6 +103,7 @@ func (s *RepositoryIntegrationSuite) TestList() {
 			}
 			got, err := s.repositories[i].List()
 			s.Empty(got)
+			s.NoError(err)
 
 			err = s.repositories[i].Create(booking)
 
