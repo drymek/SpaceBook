@@ -1,6 +1,8 @@
 package endpoint_test
 
 import (
+	"context"
+
 	"dryka.pl/SpaceBook/internal/domain/booking/model"
 	"github.com/stretchr/testify/mock"
 )
@@ -19,7 +21,7 @@ func (b *BookingServiceMock) List() ([]model.Booking, error) {
 	return args.Get(0).([]model.Booking), args.Error(1)
 }
 
-func (b *BookingServiceMock) Create(booking *model.Booking) error {
-	args := b.Called(booking)
+func (b *BookingServiceMock) Create(ctx context.Context, booking *model.Booking) error {
+	args := b.Called(ctx, booking)
 	return args.Error(0)
 }

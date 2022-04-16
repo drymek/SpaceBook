@@ -35,7 +35,7 @@ func (s *EndpointSuite) TestHandleErrorFromService() {
 
 	serviceErr := service2.ErrBookingService(service2.ErrBookingDateConflict)
 	service := new(BookingServiceMock)
-	service.On("Create", mock.Anything).
+	service.On("Create", mock.Anything, mock.Anything).
 		Return(serviceErr)
 
 	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
@@ -117,7 +117,7 @@ func (s *EndpointSuite) TestHandleSuccess() {
 	}
 
 	service := new(BookingServiceMock)
-	service.On("Create", mock.Anything).
+	service.On("Create", mock.Anything, mock.Anything).
 		Return(nil)
 	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
 	s.NoError(err)

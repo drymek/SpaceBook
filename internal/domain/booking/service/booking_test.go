@@ -47,7 +47,7 @@ func (s *BookingSuite) TestPersist() {
 
 	spacexClient := new(SpaceXClientMock)
 	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, nil)
-	err = NewBookingService(repository, spacexClient).Create(booking)
+	err = NewBookingService(repository, spacexClient).Create(context.Background(), booking)
 	s.NoError(err)
 	repository.AssertCalled(s.T(), "Create", booking)
 }
@@ -70,7 +70,7 @@ func (s *BookingSuite) TestPersistWithoutID() {
 
 	spacexClient := new(SpaceXClientMock)
 	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, nil)
-	err = NewBookingService(repository, spacexClient).Create(booking)
+	err = NewBookingService(repository, spacexClient).Create(context.Background(), booking)
 	s.NoError(err)
 	repository.AssertCalled(s.T(), "Create", booking)
 	s.Len(booking.ID, 36)
@@ -94,7 +94,7 @@ func (s *BookingSuite) TestSpaceXBookingExists() {
 
 	spacexClient := new(SpaceXClientMock)
 	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{"3a50ae198086"}, nil)
-	err = NewBookingService(repository, spacexClient).Create(booking)
+	err = NewBookingService(repository, spacexClient).Create(context.Background(), booking)
 	s.Error(err)
 	s.ErrorIs(err, ErrBookingDateConflict)
 	repository.AssertNotCalled(s.T(), "Create", mock.Anything)
@@ -119,7 +119,7 @@ func (s *BookingSuite) TestSpaceXBookingClientError() {
 	spacexClient := new(SpaceXClientMock)
 	ErrSpacex := fmt.Errorf("SpaceX error")
 	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, ErrSpacex)
-	err = NewBookingService(repository, spacexClient).Create(booking)
+	err = NewBookingService(repository, spacexClient).Create(context.Background(), booking)
 	s.Error(err)
 	s.ErrorIs(err, ErrSpacex)
 	repository.AssertNotCalled(s.T(), "Create", mock.Anything)
@@ -143,7 +143,7 @@ func (s *BookingSuite) TestWrongDestination() {
 
 	spacexClient := new(SpaceXClientMock)
 	spacexClient.On("GetLaunches", date, model.VandenbergSpaceForceBase1).Return([]string{}, nil)
-	err = NewBookingService(repository, spacexClient).Create(booking)
+	err = NewBookingService(repository, spacexClient).Create(context.Background(), booking)
 	s.Error(err)
 	s.ErrorIs(err, ErrBookingDateTimetable)
 	repository.AssertNotCalled(s.T(), "Create", mock.Anything)

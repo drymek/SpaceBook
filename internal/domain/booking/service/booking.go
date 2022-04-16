@@ -10,7 +10,7 @@ import (
 )
 
 type BookingService interface {
-	Create(booking *model.Booking) error
+	Create(ctx context.Context, booking *model.Booking) error
 	List() ([]model.Booking, error)
 	Delete(id string) error
 }
@@ -29,13 +29,12 @@ func (b *bookingService) List() ([]model.Booking, error) {
 	return b.repository.List()
 }
 
-func (b *bookingService) Create(booking *model.Booking) error {
+func (b *bookingService) Create(ctx context.Context, booking *model.Booking) error {
 	err := booking.Validate()
 	if err != nil {
 		return err
 	}
 
-	ctx := context.Background()
 	launches, err := b.client.GetLaunches(ctx, booking.LaunchDate, booking.LaunchpadID)
 	if err != nil {
 		return ErrBookingService(err)
