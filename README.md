@@ -34,7 +34,13 @@ task test
 To run project for production, use:
 
 ```bash
-docker run -p 8080:8080  drymek/spacebook:latest
+docker run -p 8080:8080 \
+    -e DATABASE_HOST=postgres \
+    -e DATABASE_PORT=5432 \
+    -e DATABASE_USER=sb \
+    -e DATABASE_PASSWORD=password \
+    -e DATABASE_NAME=sb \
+    drymek/spacebook:latest
 ```
 
 # Usage examples
