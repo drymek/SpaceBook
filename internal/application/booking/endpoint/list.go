@@ -13,7 +13,6 @@ import (
 
 func MakeListEndpoint(_ logger.Logger, service service.BookingService) endpoint.Endpoint {
 	return func(_ context.Context, _ interface{}) (interface{}, error) {
-
 		bookings, err := service.List()
 		if err != nil {
 			return nil, httpx.NewInternalServerError(err)

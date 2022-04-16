@@ -168,3 +168,36 @@ func (s *BookSuite) TestBookingList() {
 	s.Nil(err)
 	s.Equal(http.StatusOK, res.StatusCode, "Expected status code 200")
 }
+
+func (s *BookSuite) TestBookingDelete() {
+	srv := httptest.NewServer(server.NewServer(s.AppDependencies))
+	defer srv.Close()
+	date, err := model.NewDayDateFromString("2022-02-02")
+	s.NoError(err)
+	booking := &model.Booking{
+		ID:            "123",
+		Firstname:     "Marcin",
+		Lastname:      "Dryka",
+		Gender:        "Male",
+		Birthday:      date,
+		LaunchpadID:   "",
+		DestinationID: "",
+		LaunchDate:    date,
+	}
+	err = s.AppDependencies.Repository.Create(booking)
+	s.NoError(err)
+
+	req, err := http.NewRequest(http.MethodDelete, srv.URL+"/bookings/"+booking.ID, bytes.NewBuffer([]byte("")))
+	req.Header.Set("Content-Type", "application/json")
+	s.NoError(err)
+	res, err := http.DefaultClient.Do(req)
+	s.NoError(err)
+
+	got, err := ioutil.ReadAll(res.Body)
+	_ = got
+	err2 := res.Body.Close()
+	s.Nil(err)
+	s.Nil(err2)
+
+	s.Equal(http.StatusNoContent, res.StatusCode, "Expected status code 204")
+}
