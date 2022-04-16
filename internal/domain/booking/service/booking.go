@@ -7,12 +7,17 @@ import (
 
 type BookingService interface {
 	Create(booking *model.Booking) error
+	List() ([]model.Booking, error)
 }
 
 type bookingService struct {
 	repository repository.BookingRepository
 	client     SpaceXClient
 	timetable  Timetable
+}
+
+func (b *bookingService) List() ([]model.Booking, error) {
+	return b.repository.List()
 }
 
 func (b *bookingService) Create(booking *model.Booking) error {

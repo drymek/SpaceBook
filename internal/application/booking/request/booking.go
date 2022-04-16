@@ -11,6 +11,7 @@ import (
 )
 
 type BookingRequest struct {
+	ID            string `json:"id"`
 	Firstname     string `json:"firstname"`
 	Lastname      string `json:"lastname"`
 	Gender        string `json:"gender"`

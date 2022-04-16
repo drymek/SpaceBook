@@ -28,6 +28,7 @@ func MakeCreateEndpoint(_ logger.Logger, service service.BookingService) endpoin
 		}
 
 		booking, err := model.NewBooking(
+			r.ID,
 			r.Firstname,
 			r.Lastname,
 			r.Gender,

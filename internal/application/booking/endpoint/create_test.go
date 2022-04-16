@@ -122,12 +122,3 @@ func (s *EndpointSuite) TestHandleSuccess() {
 	_, err := endpoint.MakeCreateEndpoint(nil, service)(context.TODO(), req)
 	s.NoError(err)
 }
-
-type BookingServiceMock struct {
-	mock.Mock
-}
-
-func (b *BookingServiceMock) Create(booking *model.Booking) error {
-	args := b.Called(booking)
-	return args.Error(0)
-}

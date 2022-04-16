@@ -12,6 +12,18 @@ type bookingRepository struct {
 	collection map[string]*model.Booking
 }
 
+func (b *bookingRepository) List() ([]model.Booking, error) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	bookings := make([]model.Booking, 0, len(b.collection))
+	for _, booking := range b.collection {
+		bookings = append(bookings, *booking)
+	}
+
+	return bookings, nil
+}
+
 func (b *bookingRepository) Create(booking *model.Booking) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
